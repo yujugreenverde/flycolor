@@ -27,7 +27,19 @@ def ensure_1d(x):
     return np.array(x, dtype=float).reshape(-1)
 
 def trapz(y, x):
-    return float(np.trapz(np.array(y, dtype=float), np.array(x, dtype=float)))
+    y = np.array(y, dtype=float)
+    x = np.array(x, dtype=float)
+
+    # NumPy >= 2.0 uses trapezoid()
+    if hasattr(np, "trapezoid"):
+        return float(np.trapezoid(y, x))
+
+    # Fallback for older NumPy
+    if hasattr(np, "trapz"):
+        return float(np.trapz(y, x))
+
+    raise AttributeError("NumPy has neither trapezoid nor trapz; please check numpy version.")
+
 
 def interp_to(wl_src, y_src, wl_dst):
     wl_src = ensure_1d(wl_src)
